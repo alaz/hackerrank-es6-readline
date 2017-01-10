@@ -5,9 +5,17 @@ let readline = require('..');
 let fs = require('fs');
 
 describe("ES6 readline for Hackerrank", () => {
-  it("pass something", () => {
-    let rl = readline.readLine(fs.createReadStream("test.txt"));
-    assert.equal(rl.next().value, "test");
-    assert.equal(rl.next().done, true);
+  it("reads lines", function(done) {
+    readline.readLines(fs.createReadStream("test/test.txt"), function* () {
+      try {
+        assert.equal(yield, "test");
+        assert.equal(yield, "line2");
+        assert.equal(yield, "long line with blanks");
+        assert.equal(yield, "some utf8 символы");
+        done();
+      } catch (err) {
+        done(err);
+      }
+    });
   });
 });

@@ -1,18 +1,23 @@
 'use strict';
 
-export function* readLine(stream, bufsize = 1024) {
-  const EOL = require('os').EOL;
-  const Fs = require('fs');
-  const buf = new Buffer(bufsize);
+export function readLines(stream, gen) {
+  let g = gen();
 
-  stream.resume();
-  stream.setEncoding('ascii');
+  let input = "";
+  stream.on('data', data => {
+    input += data.toString();
+  });
 
-  while (Fs.readSync(stream.fd, buf, 0, buf.length)) {
-    let lines = buf.toString().split(EOL);
-
-    for (let index in lines) {
-      yield lines[index];
-    }
-  }
+  stream.on('end', () => {
+    g.next();
+    input.split("\n").forEach(x => g.next(x));
+  });
 }
+
+// Use:
+//
+// readLines(process.stdin, function* main() {
+//   let a = parseInt(yield);
+//   let b = parseInt(yield);
+//   console.log(a+b);
+// });
