@@ -1,12 +1,13 @@
 'use strict';
 
-import {readLine} from '../src/readline';
 let assert = require('assert');
+let readline = require('..');
+let fs = require('fs');
 
 describe("ES6 readline for Hackerrank", () => {
-  let readline = readLine(process.stdin);
-
   it("pass something", () => {
-    assert.equal(true, true);
+    let rl = readline.readLine(fs.createReadStream("test.txt"));
+    assert.equal(rl.next().value, "test");
+    assert.equal(rl.next().done, true);
   });
 });
